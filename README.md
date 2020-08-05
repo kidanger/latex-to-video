@@ -8,12 +8,13 @@ System requirements:
 - 'convert' from imagemagick
 - conda, not mandatory
 
+Download the weights:
 ```bash
 $ wget https://github.com/kidanger/latex-to-video/releases/download/v1/data.tar.gz
 $ tar xvf data.tar.gz
 ```
 
-Tested from a fresh conda with python 2.7:
+Tested from a fresh conda with python 3.7:
 ```bash
 $ conda create -n tts2 python=3.7
 $ conda activate tts2
