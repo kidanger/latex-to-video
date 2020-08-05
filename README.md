@@ -70,5 +70,5 @@ It works on a line per line basis, so put each sentence in its own line.
 
 Code and weights of the tts taken from [colab](https://colab.research.google.com/drive/1u_16ZzHjKYFn1HNVuA4Qf_i2MMFB9olY?usp=sharing)
 
-PDF to mp4 convert by Charles Hessel
+PDF to mp4 conversion by Charles Hessel
 
