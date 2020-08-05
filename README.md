@@ -6,6 +6,7 @@ System requirements:
 - sox
 - ffmpeg
 - 'convert' from imagemagick
+- conda, not mandatory
 
 ```bash
 $ wget https://github.com/kidanger/latex-to-video/releases/download/v1/data.tar.gz
