@@ -13,7 +13,7 @@ import os
 import sys
 import errno
 from tts import run
-from mutagen.mp3 import MP3
+from mutagen.wave import WAVE
 import iio
 import numpy as np
 import ffmpeg
@@ -68,15 +68,14 @@ def main(tex, pdf, vid, fast=False):
         if text != oldtext:
             # NOTE: the noise is just to make it a bit more real
             run(text, f'audios/{i}.wav', noise=0.0005)
+            os.system(f'sox audios/{i}.wav audios/{i}_tuned.wav reverb 25 25 lowpass -1 2500 pitch 0 tempo 1.05')
             with open(f'audios/{i}.wav.txt', 'w') as f:
                 f.write(text)
-        # NOTE: feel free to adjust this sox processing (eg change the pitch to -500)
-        os.system(f'sox audios/{i}.wav audios/{i}.mp3 reverb 25 25 lowpass -1 2500 pitch 0 rate -v 44100 tempo 1.05')
-        length = MP3(f'audios/{i}.mp3').info.length
+        length = WAVE(f'audios/{i}_tuned.wav').info.length
         lengths[i] = length
         print(i, length)
-    files = ' '.join(f'audios/{i}.mp3' for i in sorted(frames.keys()))
-    os.system(f'sox --combine concatenate {files} audio.mp3')
+    files = ' '.join(f'audios/{i}_tuned.wav' for i in sorted(frames.keys()))
+    os.system(f'sox --combine concatenate {files} audio.mp3 rate -v 44100')
 
     images = {}
     for f in sorted(frames.keys()):
@@ -122,18 +121,20 @@ def main(tex, pdf, vid, fast=False):
             .run_async(pipe_stdin=True)
             )
 
+    acclengths = 0
+    accframe = 0
     for f in sorted(frames.keys()):
         frame = images[f]
         l = lengths[f]
         print(f, l)
-        # TODO: this rounding can produce desync between audio and video
-        # should use a counter and compare with the cumulated lengths
-        for _ in range(int(l * framerate)):
+        while accframe < (acclengths + l) * framerate:
             process.stdin.write(
                     frame
                     .astype(np.uint8)
                     .tobytes()
             )
+            accframe += 1
+        acclengths += l
 
     process.stdin.close()
     process.wait()

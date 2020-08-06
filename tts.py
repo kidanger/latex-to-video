@@ -79,17 +79,19 @@ def run(text, fileout, noise=0):
         if not l:
             continue
         if l == '%>pause':
-            audios.append(np.random.randn(int(rate * 0.5))*noise)
+            audios.append(np.zeros(int(rate * 0.5)))
         elif l == '%>shortpause':
-            audios.append(np.random.randn(int(rate * 0.1))*noise)
+            audios.append(np.zeros(int(rate * 0.1)))
         else:
             l = l.replace('%> ', '')
             print(l)
             audio = tts(model, l, TTS_CONFIG, use_cuda, ap, use_gl=False)
-            audios.append(audio + np.random.randn(*audio.shape)*noise)
-            audios.append(np.random.randn(int(rate * 0.3))*noise)
+            audios.append(audio)
+            audios.append(np.zeros(int(rate * 0.3)))
     if audios:
-        write(fileout, rate, np.concatenate(audios))
+        audio = np.concatenate(audios)
+        audio += np.random.randn(*audio.shape)*noise
+        write(fileout, rate, audio)
         print(fileout, 'saved.')
 
 if __name__ == '__main__':
