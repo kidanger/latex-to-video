@@ -41,10 +41,7 @@ def main(tex, pdf, vid, fast=False):
             frames[cur].append(l)
 
     tmpdir = 'slides'
-    try: os.makedirs(tmpdir)
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(tmpdir): pass
-        else: raise
+    os.makedirs(tmpdir, exist_ok=True)
     density = 304.8 if not fast else 61
     command = f'convert -verbose -density {density} {pdf} {tmpdir}/%d.png'
     print(f'Executing command: {command}')

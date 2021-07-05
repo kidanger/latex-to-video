@@ -3,18 +3,21 @@
 ## Installation
 
 System requirements:
+
 - sox
 - ffmpeg
 - 'convert' from imagemagick
 - conda, not mandatory
 
 Download the weights:
+
 ```bash
 $ wget https://github.com/kidanger/latex-to-video/releases/download/v1/data.tar.gz
 $ tar xvf data.tar.gz
 ```
 
 Tested from a fresh conda with python 3.7:
+
 ```bash
 $ conda create -n tts2 python=3.7
 $ conda activate tts2
@@ -28,12 +31,14 @@ $ pip install inflect fire mutagen iio ffmpeg-python
 ```
 
 Try the TTS:
+
 ```bash
 $ python tts.py 'bla bla bla' out.wav
 $ play out.wav
 ```
 
-Try the demo: (**recommended**)
+Try the demo:
+
 ```bash
 $ cd demo
 $ latexmk -pdf main.tex
@@ -41,9 +46,27 @@ $ python ../process.py main.tex main.pdf main.mp4
 $ vlc main.mp4
 ```
 
+## Installation (docker)
+
+Build the docker image locally:
+
+```bash
+$ docker build . --tag latex-to-video
+```
+
+Try the demo: (**recommended**)
+
+```bash
+$ cd demo
+$ latexmk -pdf main.tex
+$ docker run --rm -u (id -u) -v (pwd):/data latex-to-video main.tex main.pdf main.mp4
+$ vlc main.mp4
+```
+
 ## Usage
 
 Try on your slides:
+
 ```bash
 $ cd somewhere
 $ latexmk main.tex -pdf
