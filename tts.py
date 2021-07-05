@@ -79,15 +79,15 @@ def run(text, fileout, noise=0):
         if not l:
             continue
         if l == '%>pause':
-            audios.append(np.zeros(int(rate * 0.5)))
+            audios.append(np.zeros(int(rate * 0.8)))
         elif l == '%>shortpause':
-            audios.append(np.zeros(int(rate * 0.1)))
+            audios.append(np.zeros(int(rate * 0.15)))
         else:
             l = l.replace('%> ', '')
             print(l)
             audio = tts(model, l, TTS_CONFIG, use_cuda, ap, use_gl=False)
             audios.append(audio)
-            audios.append(np.zeros(int(rate * 0.3)))
+            audios.append(np.zeros(int(rate * 0.5)))
     if audios:
         audio = np.concatenate(audios)
         audio += np.random.randn(*audio.shape)*noise
