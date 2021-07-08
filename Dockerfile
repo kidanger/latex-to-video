@@ -26,8 +26,7 @@ COPY tts.py .
 RUN sed -i 's/none/read|write/g' /etc/ImageMagick-6/policy.xml
 
 WORKDIR /data
-RUN useradd 1000 && chown -R 1000 . \
-    && mkdir /home/1000 && chown 1000:1000 /home/1000
-USER 1000
+ENV NUMBA_CACHE_DIR=/tmp
+ENV MPLCONFIGDIR=/tmp
 ENTRYPOINT ["python3", "/process.py"]
 
