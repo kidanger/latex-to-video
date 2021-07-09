@@ -30,11 +30,20 @@ def main(tex, pdf, vid, fast=False):
     lines = [l.strip() for l in lines]
     lines = list(filter(lambda l: '%>' in l, lines))
     cur = -1
+    slideid = -1
     frames = {}
+    slide_per_frame = {}
     for l in lines:
         if l == '%>next':
             cur += 1
+            slideid += 1
             frames[cur] = []
+            slide_per_frame[cur] = slideid
+        elif l == '%>prev':
+            cur += 1
+            slideid -= 1
+            frames[cur] = []
+            slide_per_frame[cur] = slideid
         elif l == '%>stop':
             break
         else:
@@ -76,7 +85,7 @@ def main(tex, pdf, vid, fast=False):
 
     images = {}
     for f in sorted(frames.keys()):
-        p = f'slides/{f}.png'
+        p = f'slides/{slide_per_frame[f]}.png'
         i = iio.read(p)
         print(f'{p}: {i.shape}')
         if i.shape[2] == 3:
