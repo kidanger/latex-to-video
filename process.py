@@ -10,7 +10,6 @@ usage:
 '''
 
 import os
-import sys
 import errno
 from tts import run
 from mutagen.wave import WAVE
@@ -25,7 +24,7 @@ pix_fmt='yuv420p'
 crf=18
 preset='slow'
 
-def main(tex, pdf, vid, fast=False):
+def main(tex, pdf, vid, fast=False, tempo=1.0):
     lines = open(tex).readlines()
     lines = [l.strip() for l in lines]
     lines = list(filter(lambda l: '%>' in l, lines))
@@ -58,10 +57,7 @@ def main(tex, pdf, vid, fast=False):
 
     # NOTE: the audio files are cached if the next did not change of a slide
     # delete the folder to clear the cache
-    try: os.makedirs('audios')
-    except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(tmpdir): pass
-        else: raise
+    os.makedirs('audios', exist_ok=True)
 
     lengths = {}
     for i in sorted(frames.keys()):
@@ -74,7 +70,7 @@ def main(tex, pdf, vid, fast=False):
         if text != oldtext:
             # NOTE: the noise is just to make it a bit more real
             run(text, f'audios/{i}.wav', noise=0.0005)
-            os.system(f'sox audios/{i}.wav audios/{i}_tuned.wav reverb 25 25 lowpass -1 2300 pitch 0 tempo 1')
+            os.system(f'sox audios/{i}.wav audios/{i}_tuned.wav reverb 25 25 lowpass -1 2300 pitch 0 tempo {tempo}')
             with open(f'audios/{i}.wav.txt', 'w') as f:
                 f.write(text)
         length = WAVE(f'audios/{i}_tuned.wav').info.length
@@ -106,7 +102,7 @@ def main(tex, pdf, vid, fast=False):
         i = i.astype(np.uint8)
         images[f] = i.astype(np.uint8)
 
-    height, width, channels = i.shape
+    height, width, _ = i.shape
     audio_stream = ffmpeg.input('audio.mp3')
     process = (
             ffmpeg
